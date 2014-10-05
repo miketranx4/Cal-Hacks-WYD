@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request,jsonify, session
 import db as backend
 import pdb
 
@@ -14,7 +14,7 @@ def hello():
 
 @app.route("/getall")
 def getall():
-    return jsonify(result=backend.getall(backend.db))
+    return jsonify(backend.getall(backend.db))
 
 @app.route("/get/<key>")
 def get(key):
@@ -22,7 +22,7 @@ def get(key):
 
 @app.route("/delete/<key>")
 def delete(key):
-    return jsonify(result=backend.delete(backend.db, key))
+    return jsonify(result=backend.delete(backend.db, str(key)))
 
 @app.route("/getdistance")
 def getdistance():
@@ -31,10 +31,13 @@ def getdistance():
     return jsonify(result=backend.getdistance(backend.db, key1, key2))
 
 @app.route("/put", methods=['POST'])
-def put():
-  name = request.form['name']
-  lat = request.form['lat']
-  lon = request.form['lon']
+def put(): 
+  session['logged_in'] = True
+  session['uid'] = user.id
+  session['username'] = user.username
+  name = request.form('name')
+  lat = request.form('lat');
+  lon = request.form('lon');
   backend.put(backend.db, name, lat, lon)
   pdb.set_trace()
   return jsonify(result=backend.get(backend.db, name)[0])
@@ -43,7 +46,7 @@ def put():
 def getpeopleinradius():
     try: 
        vip = request.args.get('vip')
-    except Exception, e:
+    except Exception as e:
        return "User not Found!"
     distance_limit = request.args.get('distance_limit')
     if distance_limit <= 0:
