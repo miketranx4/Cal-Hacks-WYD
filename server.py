@@ -27,7 +27,7 @@ def delete(key):
 @app.route("/getdistance")
 def getdistance():
     key1 = request.args.get('key1')
-    key2 = requet.args.get('key2')
+    key2 = request.args.get('key2')
     return jsonify(result=backend.getdistance(backend.db, key1, key2))
 
 @app.route("/put", methods=['POST'])

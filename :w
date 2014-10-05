@@ -1,0 +1,44 @@
+from flask import Flask, request, jsonify
+import db as backend
+
+# For environment variables
+from os import getenv
+
+app = Flask(__name__)
+app.debug = True
+
+@app.route("/")
+def hello():
+    return app.send_static_file('index.html')
+
+@app.route("/getall")
+def getall():
+    return jsonify(backend.getall(backend.db))
+
+@app.route("/get/<key>")
+def get(key):
+    return jsonify(backend.get(backend.db,key))
+
+@app.route("/delete/<key>")
+def delete(key):
+    return jsonify(backend.delete(backend.db, key))
+
+@app.route("/getdistance")
+def getdistance():
+    key1 = request.args.get('key1')
+    key2 = requet.args.get('key2')
+    return jsonify(backend.getdistance(backend.db, key1, key2))
+
+@app.route("/getpeopleinradius")
+def getpeopleinradius():
+    vip = request.args.get('vip')
+    if vip == "":
+        vip = "John"
+    distance_limit = request.args.get('distance_limit')
+    if distance_limit <= 0:
+        distance_limit = 0
+    return jsonify(backend.getpeopleinradius(backend.db, vip, str(distance_limit)))
+
+
+if __name__ == "__main__":
+    app.run(port=(int(getenv('SERVER_PORT')) or 5000), host='0.0.0.0')
