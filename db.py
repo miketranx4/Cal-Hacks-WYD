@@ -1,4 +1,5 @@
 import fdb
+import pdb
 import math
 
 fdb.api_version(200)
@@ -12,25 +13,30 @@ def getall(tr):
 
 # Add a person into the database, along with their coordinates
 def put(tr, key, lat, lon):
-	tr[key] = str(lat) + "," + str(lon)
+	tr[str(key)] = str(lat) + "," + str(lon)
 
 # Retrieve an individual person
-def get(tr, key):
-	return tr[key]
+def get(tr, key):	
+    val = tr[str(key)]
+
+    #pdb.set_trace() 
+    if val == None:
+        raise Exception("User not found!")
+    return val
 
 # Remove a person from the database
 def delete(tr, key):
-	del tr[key]
+	del tr[str(key)]
 	return tr
 
 # Return Earth distance from one coordinate to another
 def getdistance(tr, key1, key2):
 	if key1 != key2:
-		first = tr[key1]
+		first = get(tr, key1)
 		firstcoor = first.split(',')
 		x1, y1 = float(firstcoor[0]), float(firstcoor[1])
 
-		second = tr[key2]
+		second = get(tr, key2)
 		secondcoor = second.split(',')
 		x2, y2 = float(secondcoor[0]), float(secondcoor[1])
 
@@ -50,19 +56,15 @@ def getpeopleinradius(tr, vip, distance_limit):
 	mylist = getall(tr)
 	inradius = []
 	for key, value in mylist:
-		if vip != key:
-			distance = getdistance(tr, vip, key)
+		if str(vip) != str(key):
+                    try:
+			distance = getdistance(tr, str(vip), str(key))
 			if distance <= distance_limit:
 				inradius.append(key)
+                    except Exception as e:
+                        print "Failed to fetch %s" % (key)
 	return inradius
 
-# Test cases
-put(db, "Alice", 37.865, -122.261)
-put(db, "Bob", 37.861, -122.260)
-put(db, "Clyde", 37.863, -122.265)
-put(db, "Dawny", 37.869, -122.250)
-getdistance(db, "Alice", "Bob")
-print(getpeopleinradius(db, "Alice", 10))
 
 
 
