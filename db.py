@@ -8,7 +8,7 @@ db = fdb.open()
 
 # Returns all keys in the database
 def getall(tr):
-    X = tr[['AAA':'ZZZ']
+    X = tr['AAA':'ZZZ']
     return X
 
 # Add a person into the database, along with their coordinates
@@ -49,7 +49,7 @@ def getdistance(tr, key1, key2):
     elif key1 == key2:
   	return 0
     else:
-  	    return 0
+  	return 0
 
 # Return a list of people within the vip's distance_limit
 def getpeopleinradius(tr, vip, distance_limit):
